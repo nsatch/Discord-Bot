@@ -2,7 +2,6 @@
 # to make a command bot
 from discord.ext import commands
 import random
-import asyncio
 
 # Set the prefix character to signal a command to the bot as '!'
 bot = commands.Bot(command_prefix = '!')
