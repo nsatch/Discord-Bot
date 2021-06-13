@@ -67,23 +67,32 @@ async def tictactoe(ctx):
 @bot.command(name = "q", help = "Display a quote from someone")
 async def q(ctx, name: str):
     name = name.lower()
+    nameFound = False                      # Bool flag for if name already exist in names.txt (i.e if we have quotes for this name)
     nameFile = open("names.txt")
-    for line in nameFile:              # Iterate through each line in the names.txt
-        if (line == name + "\n"):        # If any line already contains the name we are trying to add we do not need to make a new quote file and can instead edit the existing one
-            nameFound = True
+    for line in nameFile:                  # Iterate through each line in the names.txt
+        if (line == name + "\n"):          # If a line has the name of the person we are trying to get a quote from
+            nameFound = True               # Set the bool flag to true for next if statement
             break
-    nameFile.close
+    nameFile.close                         # Close the name file since we no longer need to see its contents
 
     if (nameFound == False):           # If the name does not exists, there is no quote file for this name yet and we need to write that we are making a new file for it
-        await ctx.send("There are no quotes for " + name)
+        await ctx.send("There are no quotes for " + name)  # Tell the user we do not have this name stored therefore no quotes from them
     else:
         quoteFolder = "quotes/"            # Set variable for quotes folder directory to store all the quote text files in one folder for organization
-        quoteFile = open(quoteFolder + name + ".txt")
-        quoteList = []
-        for line in quoteFile:
-            quoteList.append(line)
-        await ctx.send(":mega: " + random.choice(quoteList))
+        quoteFile = open(quoteFolder + name + ".txt")  # Open the specific quote file for the person we want a quote from
+        quoteList = []                                 # Create an empty list to push all their quotes into
+        for line in quoteFile:                         # Iterate thru each line of their quote file
+            quoteList.append(line)                     # Push each line of quotes into the quote list
+        await ctx.send(":mega: " + random.choice(quoteList))  # Choose a random quote from the list we just made and have the bot send it to the server
 
+# ^^^^^^ COMMENTS ON THE EFFICENCY OF QUOTE SEARCHING THRU THE ABOVE METHOD ^^^^^^^
+# Technically speaking iterating through all the lines and storing them into a list then randomly selecting one element has horrible run time and memory consumption
+# but this is all just small text which is small in memory and the lists won't be very long given how many people will use the bot in my context, so this method is
+# fine for that purpose. 
+# If I was truly concerned about runtime, I would reserve the first line for storing how many lines are in the file as an int, then only read that line and generate 
+# a random number between 1 and that number. I would then return the quote from the random line number generated. Going to that specific line though without iteration
+# is not something I am sure is possible though with Pythons tools (I really haven't investigated this implementation at all). At the very least, you could iterate thru
+# the list this way without storing each read line in a list like I do above which would at least reduce memory consumption (again like what a few kb though?)
 
 @bot.command(name = "qa", help = "Add a new quote")
 async def qa(ctx, *nameQuote):
