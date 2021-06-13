@@ -1,0 +1,13 @@
+Add command that closes the bot
+
+Add command that starts the bot
+
+Quote bot
+
+Tic tac toe
+
+Name bot thyrosncrisps
+
+Contract agreement between two users 
+    Both users have to sign contract for agreement
+    Both users then have to end agreement once it has been completed
