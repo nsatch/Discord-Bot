@@ -65,8 +65,25 @@ async def tictactoe(ctx):
             await ctx.send("Did not type 1a")
 
 @bot.command(name = "q", help = "Display a quote from someone")
-async def q(ctx, string: str):
-    nameFile = 1
+async def q(ctx, name: str):
+    name = name.lower()
+    nameFile = open("names.txt")
+    for line in nameFile:              # Iterate through each line in the names.txt
+        if (line == name + "\n"):        # If any line already contains the name we are trying to add we do not need to make a new quote file and can instead edit the existing one
+            nameFound = True
+            break
+    nameFile.close
+
+    if (nameFound == False):           # If the name does not exists, there is no quote file for this name yet and we need to write that we are making a new file for it
+        await ctx.send("There are no quotes for " + name)
+    else:
+        quoteFolder = "quotes/"            # Set variable for quotes folder directory to store all the quote text files in one folder for organization
+        quoteFile = open(quoteFolder + name + ".txt")
+        quoteList = []
+        for line in quoteFile:
+            quoteList.append(line)
+        await ctx.send(":mega: " + random.choice(quoteList))
+
 
 @bot.command(name = "qa", help = "Add a new quote")
 async def qa(ctx, *nameQuote):
