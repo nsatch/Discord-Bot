@@ -6,9 +6,9 @@ This is a simple Discord bot just to use with some friends and do some programmi
 ### Implemented 
 - Calculator
 - Idea Generator
+- Quotes             (Basic add and call quote func finished on 6/13/2021)
 
 ### In Progress
-- Quotes 
 - Tic Tac Toe
 
 This is based of off the chatbot project from UIUC's CS 125 Summer of Side projects (https://125summer.tech/chatbots). 
