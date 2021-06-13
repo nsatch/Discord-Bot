@@ -2,6 +2,7 @@
 # to make a command bot
 from discord.ext import commands
 import random
+import asyncio
 
 # Set the prefix character to signal a command to the bot as '!'
 bot = commands.Bot(command_prefix = '!')
@@ -45,7 +46,77 @@ async def calc(ctx, x: float, fn: str, y:float):
     else:
         await ctx.send("We only support five function operations")
 
+@bot.command(name = "tictactoe", help = "Play a game of tic tac toe")
+async def tictactoe(ctx):
+    await ctx.send("`   1     2    3  ")
+    await ctx.send("a |    |    |    |")
+    await ctx.send("b |    |    |    |")
+    await ctx.send("c |    |    |    |")
 
+    gameOngoing = 1          #Bool to check if tictactoe game is ongoing
+    while (gameOngoing):     #Continue the game if there is no winner and still valid moves
+        msg = await bot.wait_for("message") 
+        if msg.content == "1a":
+            await ctx.send("`   1     2    3  ")
+            await ctx.send("a | X |    |    |")
+            await ctx.send("b |    |    |    |")
+            await ctx.send("c |    |    |    |")
+            gameOngoing = 0
+        else:
+            await ctx.send("Did not type 1a")
+
+@bot.command(name = "q", help = "Display a quote from someone")
+async def q(ctx, string: str):
+    nameFile = 1
+
+@bot.command(name = "qa", help = "Add a new quote")
+async def qa(ctx, *nameQuote):
+    nameQuote = ' '.join(nameQuote)    # Combine all the words in the nameQuote tuple into one giant element separated by white spaces
+    split = nameQuote.split(' ', 1)    # Split the string by white space, but only do once (so we have [name, quote])
+    name = split[0].lower()            # Get first word of string and store as name to save quote under
+    quote = split[1]                   # Store all of string minus first word as quote to save
+
+    nameFile = open("names.txt", "r+") # Open names.txt to read names. r+ flag = open for reading and writing
+    nameFound = False                  # Set boolean flag to know if name already exists and has a quotes file
+    for line in nameFile:              # Iterate through each line in the names.txt
+        if (line == name + "\n"):        # If any line already contains the name we are trying to add we do not need to make a new quote file and can instead edit the existing one
+            nameFound = True
+            break
+    if (nameFound == False):           # If the name does not exists, there is no quote file for this name yet and we need to write that we are making a new file for it
+        nameFile.write(name + "\n")    # Write the new name in the names.txt so we record that a quote file will exist for this name
+        nameFile.close                 # Close the name file
+
+    quoteFolder = "quotes/"            # Set variable for quotes folder directory to store all the quote text files in one folder for organization
+    if (nameFound == False):                                  # If the name isn't found, no file exists yet, so the a+ flag needs to be used to make a new file and we don't need to worry about iterating through it since it has no quotes yet
+        quoteFile = open(quoteFolder + name + ".txt", "a+")   # Open a new quote file titled "name".txt. The a+ flag means it is readable and writeable, and the file will be created if it doesn't exist
+    else:                                                     # Otherwise if the new exists, we don't need to make the file but need to iterate thru it so see if quote exists so use r+ flag
+        quoteFile = open(quoteFolder + name + ".txt", "r+")   # Open a new quote file titled "name".txt. The r+ flag means it is readable and writeable, but a+ opens at end of file which makes it
+                                                              # impossible to iterate through file since we are already at the last line. Need to iterate to check if quote already exists
+    quoteFound = False                 # Set boolean flag to check if we find the quote
+    for line in quoteFile:             # Iterate through each line in the quote files
+        if (line == (quote + "\n")):   # If the quote already exists
+            quoteFound = True          # We found the quote
+            await ctx.send("Quote already exists! I'm not adding this quote bro you already know I only have like 10 gb free on my HD.") #Tell user quote is not being added
+            break                      # End iteration
+
+    if (quoteFound == False):          # If the quote does not exist
+        quoteFile.write(quote + "\n")  # Add the quote
+        await ctx.send("Quote added for " + name + ": \"" + quote + "\"")  #Tell the user what quote was added and for whome
+    
+    quoteFile.close                    # Close the quote file
+
+    # Do check to see if quote was added correctly
+    # if added correctly print quote added for name with content quote
+    # else if there was an error say quote was not added
+
+@bot.command(name = "github", help = "Receive the github link for this bot to see my code and comments")
+async def github(ctx):
+    githubLink = "https://github.com/nsatch/Discord-Bot"
+    await ctx.send(githubLink)
+
+@bot.command(name = "shutdown", help = "Makes the bot go offline")
+async def shutdown(ctx):
+    bot.close()
 
 # Use token to access and update the bot
 
